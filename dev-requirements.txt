@@ -1,0 +1,37 @@
+-r requirements.txt
+
+-e .
+
+# testing
+pytest
+pytest-cov
+
+# linting
+flake8
+
+# code coverage
+codecov
+
+# docs
+sphinx
+sphinx-rtd-theme
+
+# deployment
+twine
+
+# security
+bandit
+safety
+
+# formatting
+black
+isort
+
+# miscellaneous
+pre-commit
+pre-commit-hooks
+pyupgrade
+pylint
+
+# type checking
+mypy
