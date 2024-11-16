@@ -79,7 +79,7 @@ class HostCertificate(BaseModel):
             **data: Arbitrary keyword arguments for initializing field values.
         """
         super().__init__(**data)
-        paths = get_default_paths(self.robot_name)
+        paths = get_default_paths(self.robot_name, hostname=self.common_name)
         self.cert_path = self.cert_path or paths["certificate_path"]
         self.key_path = self.key_path or paths["private_key_path"]
         self.csr_path = self.csr_path or paths["csr_path"]
