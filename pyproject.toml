@@ -18,19 +18,13 @@ classifiers = [
 ]
 dependencies = [
     "click>=8.0",
-    "fastapi>=0.68.0",
-    "uvicorn>=0.15.0",
     "cryptography>=3.4",
     "pydantic>=1.8",
     "pytz>=2024.2",
-    "sqlalchemy>=1.4",
-    "psycopg2>=2.9",
-    "alembic>=1.7"
+    "requests>=2.28"
 ]
 
 [project.scripts]
-robotsec = "probots.security.cli:main"
-
 
 [tool.setuptools]
 packages = ["probots"]
@@ -38,6 +32,26 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
 orbit = ["py.typed"]
+
+[tool.sphinx]
+project = "probots"
+author = "Jason Miller"
+version = "0.0.1"
+language = "en"
+html_theme = "sphinx-rtd-theme"
+
+[tool.sphinx.autodoc]
+automodule = true
+autoclass = true
+autofunction = true
+
+[tool.sphinx.coverage]
+coverage = true
+
+[tool.pytest.ini_options]
+addopts = "--cov=src --cov-report=term-missing --cov-fail-under=100"
+testpaths = ["tests"]
+python_files = "test_*.py"
 
 [options]
 zip_safe = false

@@ -1,4 +1,6 @@
-from probots.security.ca import CertificateAuthority
-from probots.security.cert import HostCertificate
 
-__all__ = ["CertificateAuthority", "HostCertificate"]
+VALIDITY: int =  1825
+KEY_SIZE: int = 2048
+PUBLIC_EXPONENT: int = 65537
+
+

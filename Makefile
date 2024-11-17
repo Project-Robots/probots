@@ -22,7 +22,7 @@ flake8:
 
 # Build documentation with sphinx
 docs:
-	sphinx-build -b html docs/ docs/_build
+	sphinx-build -b html docs/source docs/_build
 
 # Build the python package
 build:
@@ -31,12 +31,6 @@ build:
 # Run tests with pytest
 test:
 	pytest
-
-# Run tests with pytest and coverage
-coverage:
-	coverage run -m pytest
-	coverage report
-	coverage html
 
 # Run security checks with bandit
 bandit:
