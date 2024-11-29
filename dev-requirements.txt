@@ -2,32 +2,23 @@
 
 -e .
 
-# testing
-pytest
-pytest-cov
-pytest-pylint
+pytest>=8.3.3
+pytest-cov>=4.1.0
+pytest-pylint>=0.21.0
 
-# linting
-pylint
-pylint-pytest
-pylint-actions
+black>=24.10.0
+isort>=5.13.2
 
-# code coverage
-codecov
+pylint>=3.3.1
+pylint-pytest>=1.1.8
+pylint-actions>=0.5.0
 
-# docs
-sphinx
-sphinx-autodoc-typehints
-sphinx-copybutton
-sphinx-rtd-theme
+sphinx>=6.2.1
+sphinx-autodoc-typehints>=1.24.0
+sphinx-copybutton>=0.5.2
+sphinx-rtd-theme>=1.2.0
 
-# deployment
-twine
-
-# security
-bandit
-safety
-
-# formatting
-black
-isort
+twine>=4.0.2
+bandit>=1.7.5
+safety>=2.3.5
+codecov>=2.1.12
