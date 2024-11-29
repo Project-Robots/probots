@@ -6,5 +6,6 @@
   "python.testing.pytestEnabled": true,
   "autoDocstring.docstringFormat": "sphinx",
   "autoDocstring.includeExtendedSummary": true,
-  "autoDocstring.generateDocstringOnEnter": true
+  "autoDocstring.generateDocstringOnEnter": true,
+  "makefile.configureOnOpen": true
 }
