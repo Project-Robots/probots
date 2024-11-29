@@ -1,9 +1,7 @@
 """ A module for working with certificate authorities. """
-from copyreg import add_extension
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 
@@ -12,7 +10,6 @@ from pytz import utc
 
 import os
 
-from tomlkit import value
 import probots.security as security
 
 class RootCertificateAuthority():

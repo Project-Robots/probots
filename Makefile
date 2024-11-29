@@ -17,8 +17,8 @@ isort:
 	isort .
 
 # Run flake8 linter
-flake8:
-	flake8 .
+pylint:
+	pylint .
 
 # Build documentation with sphinx
 docs:

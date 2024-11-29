@@ -4,7 +4,6 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 import os
 import sys
-from tempfile import template
 
 sys.path.insert(0, os.path.abspath("../../src"))
 
@@ -12,7 +11,7 @@ sys.path.insert(0, os.path.abspath("../../src"))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'probots'
-copyright = '2024, Jason Miller'
+project_copyright = '2024, Jason Miller'
 author = 'Jason Miller'
 release = '0.0.1'
 

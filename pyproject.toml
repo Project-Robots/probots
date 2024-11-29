@@ -19,18 +19,32 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 dependencies = [
-    "click>=8.0",
     "cryptography>=3.4",
-    "pydantic>=1.8",
     "pytz>=2024.2",
-    "requests>=2.28"
+]
+dev-dependencies = [
+    "pytest>=8.3.3",
+    "pytest-cov>=4.1.0",
+    "pytest-pylint>=0.21.0",
+    "black>=24.10.0",
+    "isort>=5.13.2",
+    "pylint>=3.3.1",
+    "pylint-pytest>=1.1.8",
+    "pylint-actions>=0.5.0",
+    "sphinx>=6.2.1",
+    "sphinx-autodoc-typehints>=1.24.0",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-rtd-theme>=1.2.0",
+    "twine>=4.0.2",
+    "bandit>=1.7.5",
+    "safety>=2.3.5",
+    "codecov>=2.1.12"
 ]
 
 [project.scripts]
-robots-cli = "probots.cli:main"
 
 [tool.setuptools]
-packages = ["probots", "probots.security", "probots.pki"]
+packages = ["probots", "probots.security"]
 package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
@@ -59,4 +73,8 @@ python_files = "test_*.py"
 [options]
 zip_safe = false
 include_package_data = true
+
+[tool.pylint]
+disable = ["C0114", "C0115", "C0116"]
+max-line-length = 88
 

@@ -1,14 +1,9 @@
-""" X509 module."""
+""" A module for working with certificates. """
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography import x509
 from socket import gethostname, getfqdn
-from datetime import datetime
-from pytz import utc
-
-import os
-
 import probots.security as security
 
 class NodeCertificate():
@@ -33,9 +28,6 @@ class NodeCertificate():
     
     if self.private_key is None:
       self.private_key = rsa.generate_private_key(public_exponent=security.PUBLIC_EXPONENT, key_size=security.KEY_SIZE, backend=default_backend())
-      new_key = True
-    else:
-      new_key = False
       
     if self.csr is None:
       self.csr = x509.CertificateSigningRequestBuilder() \
@@ -74,7 +66,6 @@ class NodeCertificate():
     saved_csr = False
     
     try:
-    
       if save_key:
         with open(self.private_key_file, 'wb') as f:
           f.write(self.private_key.private_bytes(
