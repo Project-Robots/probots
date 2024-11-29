@@ -2,21 +2,6 @@
 
 # core
 cryptography
-pydantic
 pytz
-
-# web
-requests
-fastapi
-uvicorn
-
-# database
-sqlalchemy
-psycopg2
-alembic
-
-# logging
-# TODO: find a replacement for loguru
-loguru
 
 

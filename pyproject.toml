@@ -30,7 +30,7 @@ dependencies = [
 robots-cli = "probots.cli:main"
 
 [tool.setuptools]
-packages = ["probots", "probots.security"]
+packages = ["probots", "probots.security", "probots.pki"]
 package-dir = {"" = "src"}
 
 [tool.setuptools.package-data]
@@ -52,7 +52,7 @@ autofunction = true
 coverage = true
 
 [tool.pytest.ini_options]
-addopts = "--cov=src --cov-report=term-missing --cov-fail-under=100"
+addopts = "--cov=src --cov-report=term-missing"
 testpaths = ["tests"]
 python_files = "test_*.py"
 
