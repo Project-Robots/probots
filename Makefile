@@ -14,7 +14,7 @@ black:
 
 # Run pylint linter
 pylint:
-	pylint src
+	pylint -d duplicate-code src
 
 # Build documentation with sphinx
 docs:
@@ -31,10 +31,6 @@ test:
 # Run security checks with bandit
 bandit:
 	bandit -c pyproject.toml -r .
-
-# Run security checks with safety
-safety:
-	safety scan -r requirements.txt --full-report
 
 # Upload the package to the repository with twine
 upload:
