@@ -1,13 +1,12 @@
 """ Tests for the security module. """
 
-from unittest.mock import patch, mock_open
-from cryptography.hazmat.primitives import serialization
-from cryptography import x509
+from unittest.mock import mock_open, patch
 
-from probots.security.ca import (
-    RootCertificateAuthority,
-    IntermediateCertificateAuthority,
-)
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+
+from probots.security.ca import (IntermediateCertificateAuthority,
+                                 RootCertificateAuthority)
 
 private_key = b"""-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAyQ/WjCT1E6zu0gPWKXMXUfAU2EVq8NIzyTD6jvR2UaQ5fp3S

@@ -1,15 +1,14 @@
 """ A module for working with certificate authorities. """
 
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization, hashes
-from cryptography import x509
-from cryptography.x509.oid import NameOID
-
-from datetime import datetime, timedelta
-from pytz import utc
-
 import os
+from datetime import datetime, timedelta
+
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.x509.oid import NameOID
+from pytz import utc
 
 import probots.security as security
 

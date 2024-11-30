@@ -1,11 +1,11 @@
 """ A module for working with security. """
 
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
-from cryptography import x509
-
 import os
+
+from cryptography import x509
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 VALIDITY: int = 3650  # days
 KEY_SIZE: int = 4096  # bits

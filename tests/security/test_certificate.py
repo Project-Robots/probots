@@ -1,9 +1,11 @@
 """ Tests for the security module. """
 
-from unittest.mock import patch, MagicMock
-from probots.security.certificate import NodeCertificate
-from cryptography.hazmat.primitives import serialization
+from unittest.mock import MagicMock, patch
+
 from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+
+from probots.security.certificate import NodeCertificate
 
 node_key = serialization.load_pem_private_key(
     data=b"""-----BEGIN PRIVATE KEY-----

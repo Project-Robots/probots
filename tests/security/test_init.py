@@ -1,7 +1,8 @@
 """ Tests for the security module. """
 
-from unittest.mock import patch, mock_open
-from probots.security import load_private_key, load_certificate, load_csr
+from unittest.mock import mock_open, patch
+
+from probots.security import load_certificate, load_csr, load_private_key
 
 private_key = b"""-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCUUy5Tw6aRVzBr
