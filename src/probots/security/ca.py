@@ -150,7 +150,7 @@ class RootCertificateAuthority:
         try:
             with open(file=self.crt_file, mode="wb") as f:
                 f.write(
-                    buffer=self.crt.public_bytes(encoding=serialization.Encoding.PEM)
+                    self.crt.public_bytes(encoding=serialization.Encoding.PEM)
                 )
             saved_certificate = True
         except OSError as e:
@@ -298,7 +298,7 @@ class IntermediateCertificateAuthority:
         try:
             with open(self.key_file, "wb") as f:
                 f.write(
-                    buffer=security.private_key_to_pem(self.key),
+                    security.private_key_to_pem(self.key),
                 )
             saved_private = True
 
