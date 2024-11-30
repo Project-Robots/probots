@@ -30,11 +30,11 @@ test:
 
 # Run security checks with bandit
 bandit:
-	bandit -r . --exclude tests
+	bandit -c pyproject.toml -r .
 
 # Run security checks with safety
 safety:
-	safety check -r requirements.txt --full-report
+	safety scan -r requirements.txt --full-report
 
 # Upload the package to the repository with twine
 upload:

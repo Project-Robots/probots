@@ -13,58 +13,68 @@ from probots import security
 class NodeCertificate:
     """Certificate class."""
 
-    private_key: rsa.RSAPrivateKey = None
-    certificate: x509.Certificate = None
+    key: rsa.RSAPrivateKey = None
+    cert: x509.Certificate = None
     csr: x509.CertificateSigningRequest = None
 
-    private_key_file: str = None
-    certificate_file: str = None
+    key_file: str = None
+    cert_file: str = None
     csr_file: str = None
 
-    def __init__(self, private_key_file: str, certificate_file: str, csr_file: str):
+    def __init__(self, key_file: str, cert_file: str, csr_file: str):
         """Constructor."""
-        self.private_key_file = private_key_file
-        self.certificate_file = certificate_file
+        self.key_file = key_file
+        self.cert_file = cert_file
         self.csr_file = csr_file
 
-        self.private_key = security.load_private_key(private_key_file)
-        self.certificate = security.load_certificate(certificate_file)
+        self.key = security.load_private_key(private_key_file=key_file)
+        self.cert = security.load_certificate(certificate_file=cert_file)
         self.csr = security.load_csr(csr_file=csr_file)
 
-        if self.private_key is None:
-            self.private_key = rsa.generate_private_key(
+        if self.key is None:
+            self.key = rsa.generate_private_key(
                 public_exponent=security.PUBLIC_EXPONENT,
                 key_size=security.KEY_SIZE,
                 backend=default_backend(),
             )
 
         if self.csr is None:
+            subject = x509.Name(
+                attributes=[
+                    x509.NameAttribute(
+                        oid=x509.NameOID.COMMON_NAME,
+                        value=getfqdn(),
+                    ),
+                    x509.NameAttribute(
+                        oid=x509.NameOID.ORGANIZATION_NAME,
+                        value="Xorvenia",
+                    ),
+                    x509.NameAttribute(
+                        oid=x509.NameOID.ORGANIZATIONAL_UNIT_NAME,
+                        value="IT and Security Engineering",
+                    ),
+                    x509.NameAttribute(
+                        oid=x509.NameOID.COUNTRY_NAME,
+                        value="US",
+                    ),
+                    x509.NameAttribute(
+                        oid=x509.NameOID.STATE_OR_PROVINCE_NAME,
+                        value="California",
+                    ),
+                    x509.NameAttribute(
+                        oid=x509.NameOID.LOCALITY_NAME, value="Placentia"
+                    ),
+                    x509.NameAttribute(oid=x509.NameOID.POSTAL_CODE, value="92870"),
+                    x509.NameAttribute(
+                        oid=x509.NameOID.EMAIL_ADDRESS,
+                        value="xorvenia@thoughtparameters.com",
+                    ),
+                ]
+            )
+
             self.csr = (
                 x509.CertificateSigningRequestBuilder()
-                .subject_name(
-                    x509.Name(
-                        [
-                            x509.NameAttribute(x509.NameOID.COMMON_NAME, getfqdn()),
-                            x509.NameAttribute(
-                                x509.NameOID.ORGANIZATION_NAME, "Xorvenia"
-                            ),
-                            x509.NameAttribute(
-                                x509.NameOID.ORGANIZATIONAL_UNIT_NAME,
-                                "IT and Security Engineering",
-                            ),
-                            x509.NameAttribute(x509.NameOID.COUNTRY_NAME, "US"),
-                            x509.NameAttribute(
-                                x509.NameOID.STATE_OR_PROVINCE_NAME, "California"
-                            ),
-                            x509.NameAttribute(x509.NameOID.LOCALITY_NAME, "Placentia"),
-                            x509.NameAttribute(x509.NameOID.POSTAL_CODE, "92870"),
-                            x509.NameAttribute(
-                                x509.NameOID.EMAIL_ADDRESS,
-                                "xorvenia@thoughtparameters.com",
-                            ),
-                        ]
-                    )
-                )
+                .subject_name(name=subject)
                 .add_extension(
                     x509.SubjectAlternativeName(
                         general_names=[
@@ -75,27 +85,27 @@ class NodeCertificate:
                     critical=False,
                 )
                 .sign(
-                    private_key=self.private_key,
+                    private_key=self.key,
                     rsa_padding=security.RSA_PADDING,
                     algorithm=hashes.SHA256(),
                     backend=default_backend(),
                 )
             )
 
-            if self.certificate is None:
+            if self.cert is None:
                 print("Certificate not found. Must sign CSR with Intermediate CA.")
 
     def save(self, save_key=False, save_csr=False, save_cert=False):
         """Save the certificate to file."""
-        saved_private = False
-        saved_certificate = False
+        saved_key = False
+        saved_cert = False
         saved_csr = False
 
         try:
             if save_key:
-                with open(self.private_key_file, "wb") as f:
-                    f.write(buffer=security.private_key_to_pem(self.private_key))
-                saved_private = True
+                with open(self.key_file, "wb") as f:
+                    f.write(buffer=security.private_key_to_pem(private_key=self.key))
+                saved_key = True
         except OSError as e:
             print(f"Error saving private key: {e}")
 
@@ -109,21 +119,21 @@ class NodeCertificate:
 
         try:
             if save_cert:
-                with open(self.certificate_file, "wb") as f:
-                    f.write(self.certificate.public_bytes(serialization.Encoding.PEM))
-                saved_certificate = True
+                with open(self.cert_file, "wb") as f:
+                    f.write(self.cert.public_bytes(serialization.Encoding.PEM))
+                saved_cert = True
         except OSError as e:
             print(f"Error saving certificate: {e}")
 
-        return (saved_private, saved_csr, saved_certificate)
+        return (saved_key, saved_csr, saved_cert)
 
     def get_certificate(self) -> x509.Certificate:
         """Get the certificate."""
-        return self.certificate
+        return self.cert
 
     def set_certificate(self, certificate: x509.Certificate):
         """Set the certificate."""
-        self.certificate = certificate
+        self.cert = certificate
 
     def get_csr(self) -> x509.CertificateSigningRequest:
         """Get the certificate signing request."""

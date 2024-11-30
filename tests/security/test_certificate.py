@@ -108,16 +108,16 @@ class TestNodeCertificate:
 
         cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
 
-        assert cert.private_key is not None
-        assert cert.certificate is not None
+        assert cert.key is not None
+        assert cert.cert is not None
         assert cert.csr is not None
 
     def test_init_generates_new_key_and_csr(self):
         cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
 
-        assert cert.private_key is not None
+        assert cert.key is not None
         assert cert.csr is not None
-        assert cert.certificate is None
+        assert cert.cert is None
 
     @patch("builtins.open", new_callable=MagicMock)
     def test_save_private_key(self, mock_open):
@@ -136,20 +136,20 @@ class TestNodeCertificate:
     @patch("builtins.open", new_callable=MagicMock)
     def test_save_certificate(self, mock_open):
         cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
-        cert.certificate = node_cert
+        cert.cert = node_cert
         cert.save(save_cert=True)
 
         assert mock_open.call_count == 1
 
     def test_get_certificate(self):
         cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
-        cert.certificate = node_cert
-        assert cert.get_certificate() is cert.certificate
+        cert.cert = node_cert
+        assert cert.get_certificate() is cert.cert
 
     def test_set_certificate(self):
         cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
         cert.set_certificate(node_cert)
-        assert cert.certificate is node_cert
+        assert cert.cert is node_cert
 
     def test_get_csr(self):
         cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")

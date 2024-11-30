@@ -57,9 +57,22 @@ zip_safe = false
 include_package_data = true
 
 [tool.pylint]
-disable = ["C0114", "C0115", "C0116"]
 max-line-length = 88
 
 [tool.pylint.main]
 load-plugins = ["pylint_actions"]
+
+[tool.bandit]
+exclude_dirs = ["tests", "docs", ".venv", "build", "dist", ".vscode", ".github", ".pytest_cache", ".git"]
+targets = ["src"]
+
+[tool.bandit.assert_used]
+skips = ["*_test.py", "*/test_*.py"]
+
+[tool.bandit.blacklist_imports]
+bad_import = ["pickle", "subprocess"]
+
+[tool.bandit.blacklist_calls]
+bad_calls = ["subprocess.*", "eval"]
+
 

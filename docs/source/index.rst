@@ -20,3 +20,19 @@ probots documentation
    :undoc-members:
    :show-inheritance:
 
+.. automodule:: probots.security
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: probots.security.ca
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: probots.security.certificate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
