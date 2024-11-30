@@ -12,10 +12,6 @@ prod:
 black:
 	black .
 
-# Sort imports with isort
-isort:
-	isort .
-
 # Run flake8 linter
 pylint:
 	pylint .
