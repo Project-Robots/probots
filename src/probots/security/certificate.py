@@ -7,7 +7,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-import probots.security as security
+from probots import security
 
 
 class NodeCertificate:
@@ -83,9 +83,7 @@ class NodeCertificate:
             )
 
             if self.certificate is None:
-                print(f"Certificate not found. Must sign CSR with Intermediate CA.")
-
-            # self.save(save_key=True, save_csr=True, save_cert=False)
+                print("Certificate not found. Must sign CSR with Intermediate CA.")
 
     def save(self, save_key=False, save_csr=False, save_cert=False):
         """Save the certificate to file."""
@@ -96,15 +94,9 @@ class NodeCertificate:
         try:
             if save_key:
                 with open(self.private_key_file, "wb") as f:
-                    f.write(
-                        self.private_key.private_bytes(
-                            encoding=serialization.Encoding.PEM,
-                            format=serialization.PrivateFormat.TraditionalOpenSSL,
-                            encryption_algorithm=serialization.NoEncryption(),
-                        )
-                    )
+                    f.write(buffer=security.private_key_to_pem(self.private_key))
                 saved_private = True
-        except Exception as e:
+        except OSError as e:
             print(f"Error saving private key: {e}")
 
         try:
@@ -112,7 +104,7 @@ class NodeCertificate:
                 with open(self.csr_file, "wb") as f:
                     f.write(self.csr.public_bytes(serialization.Encoding.PEM))
                 saved_csr = True
-        except Exception as e:
+        except OSError as e:
             print(f"Error saving CSR: {e}")
 
         try:
@@ -120,7 +112,7 @@ class NodeCertificate:
                 with open(self.certificate_file, "wb") as f:
                     f.write(self.certificate.public_bytes(serialization.Encoding.PEM))
                 saved_certificate = True
-        except Exception as e:
+        except OSError as e:
             print(f"Error saving certificate: {e}")
 
         return (saved_private, saved_csr, saved_certificate)

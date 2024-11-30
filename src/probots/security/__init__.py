@@ -22,8 +22,11 @@ def load_private_key(private_key_file: str) -> rsa.RSAPrivateKey:
         else:
             print(f"Private key file does not exist: {private_key_file}")
             return None
-    except Exception as e:
-        print(f"Error loading private key: {e}")
+    except FileNotFoundError:
+        print(f"FileNotFoundError loading private key: {private_key_file}")
+        return None
+    except OSError as e:
+        print(f"OSError loading private key: {e}")
         return None
 
 
@@ -36,8 +39,11 @@ def load_certificate(certificate_file: str) -> x509.Certificate:
         else:
             print(f"Certificate file does not exist: {certificate_file}")
             return None
-    except Exception as e:
-        print(f"Error loading certificate: {e}")
+    except FileNotFoundError:
+        print(f"FileNotFoundError loading certificate: {certificate_file}")
+        return None
+    except OSError as e:
+        print(f"OSError loading certificate: {e}")
         return None
 
 
@@ -50,6 +56,18 @@ def load_csr(csr_file: str) -> x509.CertificateSigningRequest:
         else:
             print(f"Certificate signing request file does not exist: {csr_file}")
             return None
-    except Exception as e:
-        print(f"Error loading certificate signing request: {e}")
+    except FileNotFoundError:
+        print(f"FileNotFoundError loading certificate signing request: {csr_file}")
         return None
+    except OSError as e:
+        print(f"OSError loading certificate signing request: {e}")
+        return None
+
+
+def private_key_to_pem(private_key: rsa.RSAPrivateKey) -> str:
+    """Format private key to PEM format."""
+    return private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption(),
+    )

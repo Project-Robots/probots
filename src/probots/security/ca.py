@@ -1,5 +1,6 @@
 """ A module for working with certificate authorities. """
 
+from ast import Name
 import os
 from datetime import datetime, timedelta
 
@@ -10,13 +11,11 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509.oid import NameOID
 from pytz import utc
 
-import probots.security as security
+from probots import security
 
 
 class RootCertificateAuthority:
-    """
-    A class representing a certificate authority.
-    """
+    """Root certificate authority class."""
 
     key: rsa.RSAPrivateKey
     crt: x509.Certificate
@@ -53,26 +52,45 @@ class RootCertificateAuthority:
         if new_key is False and os.path.exists(self.crt_file):
             self.crt = security.load_certificate(self.crt_file)
         else:
-            issuer = subject = x509.Name(
-                [
+
+            subject: Name = x509.Name(
+                attributes=[
                     x509.NameAttribute(
-                        NameOID.COMMON_NAME,
-                        "Elvorath S.A.F.E Root Certificate Authority",
+                        oid=NameOID.COMMON_NAME,
+                        value="Elvorath S.A.F.E Root Certificate Authority",
                     ),
-                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Elvorath"),
                     x509.NameAttribute(
-                        NameOID.ORGANIZATIONAL_UNIT_NAME,
-                        "Security and Forensics Engineering",
+                        oid=NameOID.ORGANIZATION_NAME,
+                        value="Elvorath",
                     ),
-                    x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
-                    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "California"),
-                    x509.NameAttribute(NameOID.LOCALITY_NAME, "Placentia"),
-                    x509.NameAttribute(NameOID.POSTAL_CODE, "92870"),
                     x509.NameAttribute(
-                        NameOID.EMAIL_ADDRESS, "elvorath@thoughtparameters.com"
+                        oid=NameOID.ORGANIZATIONAL_UNIT_NAME,
+                        value="Security and Forensics Engineering",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.COUNTRY_NAME,
+                        value="US",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.STATE_OR_PROVINCE_NAME,
+                        value="California",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.LOCALITY_NAME,
+                        value="Placentia",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.POSTAL_CODE,
+                        value="92870",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.EMAIL_ADDRESS,
+                        value="elvorath@thoughtparameters.com",
                     ),
                 ]
             )
+
+            issuer: Name = subject
 
             self.crt = (
                 x509.CertificateBuilder()
@@ -83,7 +101,7 @@ class RootCertificateAuthority:
                 .not_valid_before(datetime.now(utc))
                 .not_valid_after(datetime.now(utc) + timedelta(days=security.VALIDITY))
                 .add_extension(
-                    x509.BasicConstraints(ca=True, path_length=None),
+                    extval=x509.BasicConstraints(ca=True, path_length=None),
                     critical=True,
                 )
                 .add_extension(
@@ -101,7 +119,9 @@ class RootCertificateAuthority:
                     critical=True,
                 )
                 .add_extension(
-                    x509.SubjectKeyIdentifier.from_public_key(self.key.public_key()),
+                    extval=x509.SubjectKeyIdentifier.from_public_key(
+                        self.key.public_key()
+                    ),
                     critical=False,
                 )
                 .sign(
@@ -121,27 +141,27 @@ class RootCertificateAuthority:
         try:
             with open(self.key_file, "wb") as f:
                 f.write(
-                    self.key.private_bytes(
-                        encoding=serialization.Encoding.PEM,
-                        format=serialization.PrivateFormat.TraditionalOpenSSL,
-                        encryption_algorithm=serialization.NoEncryption(),
-                    )
+                    buffer=security.private_key_to_pem(self.key),
                 )
             saved_private = True
-        except Exception as e:
+        except OSError as e:
             print(f"Error saving private key: {e}")
 
         try:
-            with open(self.crt_file, "wb") as f:
-                f.write(self.crt.public_bytes(encoding=serialization.Encoding.PEM))
-                saved_certificate = True
-        except Exception as e:
+            with open(file=self.crt_file, mode="wb") as f:
+                f.write(
+                    buffer=self.crt.public_bytes(encoding=serialization.Encoding.PEM)
+                )
+            saved_certificate = True
+        except OSError as e:
             print(f"Error saving certificate: {e}")
 
         return saved_private and saved_certificate
 
 
 class IntermediateCertificateAuthority:
+    """Intermediate Certificate Authority class."""
+
     key: rsa.RSAPrivateKey
     crt: x509.Certificate
     key_file: str
@@ -155,7 +175,7 @@ class IntermediateCertificateAuthority:
         crt_file: str,
         rootca_key: rsa.RSAPrivateKey,
         rootca_crt: x509.Certificate,
-    ):
+    ) -> None:
         """
         Initializes a new instance of the IntermediateCertificateAuthority class.
         """
@@ -185,36 +205,52 @@ class IntermediateCertificateAuthority:
             self.crt = security.load_certificate(self.crt_file)
         else:
             subject = x509.Name(
-                [
+                attributes=[
                     x509.NameAttribute(
-                        NameOID.COMMON_NAME,
-                        "Elvorath S.A.F.E Intermediate Certificate Authority",
+                        oid=NameOID.COMMON_NAME,
+                        value="Elvorath S.A.F.E Intermediate Certificate Authority",
                     ),
-                    x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Elvorath"),
                     x509.NameAttribute(
-                        NameOID.ORGANIZATIONAL_UNIT_NAME,
-                        "Security and Forensics Engineering",
+                        oid=NameOID.ORGANIZATION_NAME,
+                        value="Elvorath",
                     ),
-                    x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
-                    x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "California"),
-                    x509.NameAttribute(NameOID.LOCALITY_NAME, "Placentia"),
-                    x509.NameAttribute(NameOID.POSTAL_CODE, "92870"),
                     x509.NameAttribute(
-                        NameOID.EMAIL_ADDRESS, "elvorath@thoughtparameters.com"
+                        oid=NameOID.ORGANIZATIONAL_UNIT_NAME,
+                        value="Security and Forensics Engineering",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.COUNTRY_NAME,
+                        value="US",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.STATE_OR_PROVINCE_NAME,
+                        value="California",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.LOCALITY_NAME,
+                        value="Placentia",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.POSTAL_CODE,
+                        value="92870",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.EMAIL_ADDRESS,
+                        value="elvorath@thoughtparameters.com",
                     ),
                 ]
             )
 
             self.crt = (
                 x509.CertificateBuilder()
-                .subject_name(subject)
-                .issuer_name(self.rootca_crt.subject)
-                .serial_number(x509.random_serial_number())
-                .public_key(self.key.public_key())
-                .not_valid_before(datetime.now(utc))
-                .not_valid_after(datetime.now(utc) + timedelta(security.VALIDITY))
+                .subject_name(name=subject)
+                .issuer_name(name=self.rootca_crt.subject)
+                .serial_number(number=x509.random_serial_number())
+                .public_key(key=self.key.public_key())
+                .not_valid_before(time=datetime.now(utc))
+                .not_valid_after(time=datetime.now(utc) + timedelta(security.VALIDITY))
                 .add_extension(
-                    x509.BasicConstraints(ca=True, path_length=0),
+                    extval=x509.BasicConstraints(ca=True, path_length=0),
                     critical=True,
                 )
                 .add_extension(
@@ -233,7 +269,7 @@ class IntermediateCertificateAuthority:
                 )
                 .add_extension(
                     extval=x509.SubjectKeyIdentifier.from_public_key(
-                        self.key.public_key()
+                        public_key=self.key.public_key()
                     ),
                     critical=False,
                 )
@@ -262,21 +298,18 @@ class IntermediateCertificateAuthority:
         try:
             with open(self.key_file, "wb") as f:
                 f.write(
-                    self.key.private_bytes(
-                        encoding=serialization.Encoding.PEM,
-                        format=serialization.PrivateFormat.TraditionalOpenSSL,
-                        encryption_algorithm=serialization.NoEncryption(),
-                    )
+                    buffer=security.private_key_to_pem(self.key),
                 )
             saved_private = True
-        except Exception as e:
+
+        except OSError as e:
             print(f"Error saving private key: {e}")
 
         try:
             with open(self.crt_file, "wb") as f:
                 f.write(self.crt.public_bytes(encoding=serialization.Encoding.PEM))
-                saved_certificate = True
-        except Exception as e:
+            saved_certificate = True
+        except OSError as e:
             print(f"Error saving certificate: {e}")
 
         return saved_private and saved_certificate
@@ -293,69 +326,68 @@ class IntermediateCertificateAuthority:
         """
         if csr is None:
             return None
-        else:
 
-            cert = (
-                x509.CertificateBuilder()
-                .subject_name(csr.subject)
-                .issuer_name(self.crt.subject)
-                .public_key(csr.public_key())
-                .serial_number(x509.random_serial_number())
-                .not_valid_before(datetime.now(utc))
-                .not_valid_after(datetime.now(utc) + timedelta(security.VALIDITY))
-                .add_extension(
-                    extval=x509.BasicConstraints(ca=False, path_length=0),
-                    critical=True,
-                )
-                .add_extension(
-                    extval=x509.SubjectAlternativeName(
-                        csr.extensions.get_extension_for_class(
-                            x509.SubjectAlternativeName
-                        ).value
-                    ),
-                    critical=False,
-                )
-                .add_extension(
-                    extval=x509.KeyUsage(
-                        digital_signature=True,
-                        content_commitment=False,
-                        key_encipherment=True,
-                        data_encipherment=False,
-                        key_agreement=False,
-                        key_cert_sign=False,
-                        crl_sign=True,
-                        encipher_only=False,
-                        decipher_only=False,
-                    ),
-                    critical=True,
-                )
-                .add_extension(
-                    extval=x509.ExtendedKeyUsage(
-                        usages=[
-                            x509.ExtendedKeyUsageOID.SERVER_AUTH,
-                            x509.ExtendedKeyUsageOID.CLIENT_AUTH,
-                        ]
-                    ),
-                    critical=False,
-                )
-                .add_extension(
-                    extval=x509.SubjectKeyIdentifier.from_public_key(csr.public_key()),
-                    critical=False,
-                )
-                .add_extension(
-                    extval=x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(
-                        ski=self.crt.extensions.get_extension_for_class(
-                            x509.SubjectKeyIdentifier
-                        ).value
-                    ),
-                    critical=False,
-                )
-                .sign(
-                    private_key=self.key,
-                    algorithm=hashes.SHA256(),
-                    rsa_padding=security.RSA_PADDING,
-                    backend=default_backend(),
-                )
+        cert = (
+            x509.CertificateBuilder()
+            .subject_name(csr.subject)
+            .issuer_name(self.crt.subject)
+            .public_key(csr.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(datetime.now(utc))
+            .not_valid_after(datetime.now(utc) + timedelta(security.VALIDITY))
+            .add_extension(
+                extval=x509.BasicConstraints(ca=False, path_length=0),
+                critical=True,
             )
+            .add_extension(
+                extval=x509.SubjectAlternativeName(
+                    general_names=csr.extensions.get_extension_for_class(
+                        extclass=x509.SubjectAlternativeName
+                    ).value
+                ),
+                critical=False,
+            )
+            .add_extension(
+                extval=x509.KeyUsage(
+                    digital_signature=True,
+                    content_commitment=False,
+                    key_encipherment=True,
+                    data_encipherment=False,
+                    key_agreement=False,
+                    key_cert_sign=False,
+                    crl_sign=True,
+                    encipher_only=False,
+                    decipher_only=False,
+                ),
+                critical=True,
+            )
+            .add_extension(
+                extval=x509.ExtendedKeyUsage(
+                    usages=[
+                        x509.ExtendedKeyUsageOID.SERVER_AUTH,
+                        x509.ExtendedKeyUsageOID.CLIENT_AUTH,
+                    ]
+                ),
+                critical=False,
+            )
+            .add_extension(
+                extval=x509.SubjectKeyIdentifier.from_public_key(csr.public_key()),
+                critical=False,
+            )
+            .add_extension(
+                extval=x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(
+                    ski=self.crt.extensions.get_extension_for_class(
+                        extclass=x509.SubjectKeyIdentifier
+                    ).value
+                ),
+                critical=False,
+            )
+            .sign(
+                private_key=self.key,
+                algorithm=hashes.SHA256(),
+                rsa_padding=security.RSA_PADDING,
+                backend=default_backend(),
+            )
+        )
 
         return cert

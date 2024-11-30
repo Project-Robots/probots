@@ -10,11 +10,11 @@ prod:
 
 # Format code with black
 black:
-	black .
+	black src
 
-# Run flake8 linter
+# Run pylint linter
 pylint:
-	pylint .
+	pylint src
 
 # Build documentation with sphinx
 docs:
