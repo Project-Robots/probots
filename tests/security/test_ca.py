@@ -4,7 +4,6 @@ from unittest.mock import mock_open, patch
 
 from cryptography import x509
 from cryptography.hazmat.primitives import serialization
-
 from probots.security.ca import (
     IntermediateCertificateAuthority,
     RootCertificateAuthority,
