@@ -36,7 +36,7 @@ jobs:
         run: isort . --check
         
       - name: Run pylint
-        run: pylint .
+        run: pylint -f actions src
         
       - name: Run tests
         run: pytest

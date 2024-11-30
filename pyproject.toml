@@ -12,7 +12,7 @@ authors = [
 ]
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -59,4 +59,7 @@ include_package_data = true
 [tool.pylint]
 disable = ["C0114", "C0115", "C0116"]
 max-line-length = 88
+
+[tool.pylint.main]
+load-plugins = ["pylint_actions"]
 

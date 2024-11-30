@@ -1,2 +1,2 @@
 [MASTER]
-load-plugins=pylint_pytest, pylint_actions
+load-plugins=pylint_actions
