@@ -3,6 +3,7 @@
 from socket import getfqdn, gethostname
 
 from cryptography import x509
+from cryptography.x509.oid import NameOID
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -42,32 +43,36 @@ class NodeCertificate:
             subject = x509.Name(
                 attributes=[
                     x509.NameAttribute(
-                        oid=x509.NameOID.COMMON_NAME,
+                        oid=NameOID.COMMON_NAME,
                         value=getfqdn(),
                     ),
                     x509.NameAttribute(
-                        oid=x509.NameOID.ORGANIZATION_NAME,
-                        value="Xorvenia",
+                        oid=NameOID.ORGANIZATION_NAME,
+                        value="Xovrenia Inc.",
                     ),
                     x509.NameAttribute(
-                        oid=x509.NameOID.ORGANIZATIONAL_UNIT_NAME,
-                        value="IT and Security Engineering",
+                        oid=NameOID.ORGANIZATIONAL_UNIT_NAME,
+                        value="IT andSecurity Engineering",
                     ),
                     x509.NameAttribute(
-                        oid=x509.NameOID.COUNTRY_NAME,
+                        oid=NameOID.COUNTRY_NAME,
                         value="US",
                     ),
                     x509.NameAttribute(
-                        oid=x509.NameOID.STATE_OR_PROVINCE_NAME,
+                        oid=NameOID.STATE_OR_PROVINCE_NAME,
                         value="California",
                     ),
                     x509.NameAttribute(
-                        oid=x509.NameOID.LOCALITY_NAME, value="Placentia"
+                        oid=NameOID.LOCALITY_NAME,
+                        value="Placentia",
                     ),
-                    x509.NameAttribute(oid=x509.NameOID.POSTAL_CODE, value="92870"),
                     x509.NameAttribute(
-                        oid=x509.NameOID.EMAIL_ADDRESS,
-                        value="xorvenia@thoughtparameters.com",
+                        oid=NameOID.POSTAL_CODE,
+                        value="92870",
+                    ),
+                    x509.NameAttribute(
+                        oid=NameOID.EMAIL_ADDRESS,
+                        value="xovrenia@thoughtparameters.com",
                     ),
                 ]
             )
@@ -79,7 +84,12 @@ class NodeCertificate:
                     x509.SubjectAlternativeName(
                         general_names=[
                             x509.DNSName(gethostname()),
-                            x509.DNSName(f"{gethostname()}.xovrenia.security"),
+                            x509.DNSName(f"{gethostname()}.xovrenia.inc"),
+                            x509.DNSName(f"eva.{gethostname()}.xovrenia.inc"),
+                            x509.DNSName(f"drift.{gethostname()}.xovrenia.inc"),
+                            x509.DNSName(f"astro.{gethostname()}.xovrenia.inc"),
+                            x509.DNSName(f"sentra.{gethostname()}.xovrenia.inc"),
+                            x509.DNSName(f"orbit.{gethostname()}.xovrenia.inc"),
                         ]
                     ),
                     critical=False,
