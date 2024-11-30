@@ -1,11 +1,12 @@
 """ Tests for the security module. """
+
 from unittest.mock import patch, MagicMock
 from probots.security.certificate import NodeCertificate
 from cryptography.hazmat.primitives import serialization
 from cryptography import x509
 
 node_key = serialization.load_pem_private_key(
-  data=b"""-----BEGIN PRIVATE KEY-----
+    data=b"""-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCUUy5Tw6aRVzBr
 GlwCUNOrpW+aAeFtVYyBYSvzDWpFiz/eXivk8GoDto0c8ugtGE8l6tvivQN97kR4
 UzGdNjc1fkGHbA79rJTmOofTKc5c2mUMet+Lp4fBzaoJ/0dzazHpapUHIg2quPZB
@@ -32,10 +33,12 @@ EkVlAEmYl68gp9z9015yl0+An0ggOjvTHld9eta3AoGAQ5d3WvQ6XyGL4ugLs9uS
 /4BOP/oJd/OgvqwYVRNy6ha3m4qxFnPLv1Zhy2eKetWPr3uS3pkZ2DNv+2Id2mRg
 xc2MrxXAOZehxE24tQ0EtXHtIdYtcQFQvClb18lkc/v80w5Inx40IRBkfUJgNNuk
 xHOI+6jPoGxgRJ2WTMb/8+8=
------END PRIVATE KEY-----""", password=None)
+-----END PRIVATE KEY-----""",
+    password=None,
+)
 
 node_csr = x509.load_pem_x509_csr(
-  data=b"""-----BEGIN CERTIFICATE REQUEST-----
+    data=b"""-----BEGIN CERTIFICATE REQUEST-----
 MIIDBTCCAe0CAQAwgb8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlh
 MRIwEAYDVQQHDAlQbGFjZW50aWExHzAdBgNVBAoMFlRob3VnaHQgUGFyYW1ldGVy
 cyBMTEMxFDASBgNVBAsMC0VuZ2luZWVyaW5nMSQwIgYDVQQDDBtvcmJpdC50aG91
@@ -53,10 +56,11 @@ ciubbB+mp7uWszuMD/IuAlSImM23bXysc3g5Vzwd1WdFOQ2etfl3COyzmlbsj7o5
 ap/immKyWcLMlmjdspueeMIrKjJ+YGC5OSsmnT5oqIZ8HoRMmBBKiH4VKNgi9UM+
 EG6/dsT/LsApJzA9oFPHFocvAd74Z5iT3RYon8i+QCQOaz/kLGKTCNdTDjxikvfA
 HsE8pjHUaBQF
------END CERTIFICATE REQUEST-----""")
+-----END CERTIFICATE REQUEST-----"""
+)
 
 node_cert = x509.load_pem_x509_certificate(
-  data=b"""-----BEGIN CERTIFICATE-----
+    data=b"""-----BEGIN CERTIFICATE-----
 MIIELzCCAxegAwIBAgIUXDCZ+HZmOo1kYyGOUXT4SurptrAwDQYJKoZIhvcNAQEL
 BQAwgb8xCzAJBgNVBAYTAlVTMRMwEQYDVQQIDApDYWxpZm9ybmlhMRIwEAYDVQQH
 DAlQbGFjZW50aWExHzAdBgNVBAoMFlRob3VnaHQgUGFyYW1ldGVycyBMTEMxFDAS
@@ -80,65 +84,72 @@ gzVn/ujULFmTXW8IwJjJvvZPEbYYNhg1Vwxexeh8BGArJZe1QU0rMusjKxMvuRXC
 73BVXv14sRsHoNWzKxxIwvlVsQ4Wpt+hrdkf3P1EZM6NT7b6anrKlmPNgVSJOfxa
 2Kyz8BkB3+tr6bBJdacpAk7LhxYy5gq9x6Px/HcypEXSXdmbMJ03xaB7++jewiVN
 IaXe6wEhLvK3UUn7VyC2l0dxOQ==
------END CERTIFICATE-----""")
+-----END CERTIFICATE-----"""
+)
+
 
 class TestNodeCertificate:
 
-  @patch('probots.security.load_private_key')
-  @patch('probots.security.load_certificate')
-  @patch('probots.security.load_csr')
-  @patch('probots.security.rsa.generate_private_key')
-  def test_init_with_existing_key_and_csr(self, mock_generate_key, mock_load_csr, mock_load_certificate, mock_load_private_key):
-    mock_load_private_key.return_value = node_key
-    mock_load_certificate.return_value = node_cert
-    mock_load_csr.return_value = node_csr
+    @patch("probots.security.load_private_key")
+    @patch("probots.security.load_certificate")
+    @patch("probots.security.load_csr")
+    @patch("probots.security.rsa.generate_private_key")
+    def test_init_with_existing_key_and_csr(
+        self,
+        mock_generate_key,
+        mock_load_csr,
+        mock_load_certificate,
+        mock_load_private_key,
+    ):
+        mock_load_private_key.return_value = node_key
+        mock_load_certificate.return_value = node_cert
+        mock_load_csr.return_value = node_csr
 
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
 
-    assert cert.private_key is not None
-    assert cert.certificate is not None
-    assert cert.csr is not None
+        assert cert.private_key is not None
+        assert cert.certificate is not None
+        assert cert.csr is not None
 
-  def test_init_generates_new_key_and_csr(self):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
+    def test_init_generates_new_key_and_csr(self):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
 
-    assert cert.private_key is not None
-    assert cert.csr is not None
-    assert cert.certificate is None
-        
+        assert cert.private_key is not None
+        assert cert.csr is not None
+        assert cert.certificate is None
 
-  @patch('builtins.open', new_callable=MagicMock)
-  def test_save_private_key(self, mock_open):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
-    cert.save(save_key=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    def test_save_private_key(self, mock_open):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
+        cert.save(save_key=True)
 
-    assert mock_open.call_count == 1
+        assert mock_open.call_count == 1
 
-  @patch('builtins.open', new_callable=MagicMock)
-  def test_save_csr(self, mock_open):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
-    cert.save(save_csr=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    def test_save_csr(self, mock_open):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
+        cert.save(save_csr=True)
 
-    assert mock_open.call_count == 1
+        assert mock_open.call_count == 1
 
-  @patch('builtins.open', new_callable=MagicMock)
-  def test_save_certificate(self, mock_open):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
-    cert.certificate = node_cert
-    cert.save(save_cert=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    def test_save_certificate(self, mock_open):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
+        cert.certificate = node_cert
+        cert.save(save_cert=True)
 
-    assert mock_open.call_count == 1
+        assert mock_open.call_count == 1
 
-  def test_get_certificate(self):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
-    cert.certificate = node_cert
-    assert cert.get_certificate() is cert.certificate
+    def test_get_certificate(self):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
+        cert.certificate = node_cert
+        assert cert.get_certificate() is cert.certificate
 
-  def test_set_certificate(self):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
-    cert.set_certificate(node_cert)
-    assert cert.certificate is node_cert
+    def test_set_certificate(self):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
+        cert.set_certificate(node_cert)
+        assert cert.certificate is node_cert
 
-  def test_get_csr(self):
-    cert = NodeCertificate('private_key.pem', 'certificate.pem', 'csr.pem')
-    assert cert.get_csr() is cert.csr
+    def test_get_csr(self):
+        cert = NodeCertificate("private_key.pem", "certificate.pem", "csr.pem")
+        assert cert.get_csr() is cert.csr

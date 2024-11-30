@@ -1,4 +1,5 @@
 """ Tests for the security module. """
+
 from unittest.mock import patch, mock_open
 from probots.security import load_private_key, load_certificate, load_csr
 
@@ -77,55 +78,61 @@ EG6/dsT/LsApJzA9oFPHFocvAd74Z5iT3RYon8i+QCQOaz/kLGKTCNdTDjxikvfA
 HsE8pjHUaBQF
 -----END CERTIFICATE REQUEST-----"""
 
+
 def test_load_private_key_success():
-  """
-  Test that loading a private key file returns a valid key.
-  """
-  with patch("os.path.exists", return_value=True):
-    with patch("builtins.open", mock_open(read_data=private_key)):
-      key = load_private_key("mock_private_key.pem")
-      assert key is not None, "Key is None"
-      #assert isinstance(key, rsa.RSAPrivateKey), "Key is not an instance of RSAPrivateKey"
+    """
+    Test that loading a private key file returns a valid key.
+    """
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=private_key)):
+            key = load_private_key("mock_private_key.pem")
+            assert key is not None, "Key is None"
+            # assert isinstance(key, rsa.RSAPrivateKey), "Key is not an instance of RSAPrivateKey"
+
 
 def test_load_private_key_failure():
-  """
-  Test that loading a non-existent private key file returns None.
-  """
-  with patch("os.path.exists", return_value=False):
-    with patch("builtins.open", side_effect=FileNotFoundError):
-      key = load_private_key("non_existent_key.pem")
-      assert key is None
+    """
+    Test that loading a non-existent private key file returns None.
+    """
+    with patch("os.path.exists", return_value=False):
+        with patch("builtins.open", side_effect=FileNotFoundError):
+            key = load_private_key("non_existent_key.pem")
+            assert key is None
+
 
 def test_load_certificate_success():
-  """
-  Test that loading a certificate file returns a valid certificate.
-  """
-  with patch("os.path.exists", return_value=True):
-    with patch("builtins.open", mock_open(read_data=certificate)):
-      cert = load_certificate("mock_certificate.pem")
-      assert cert is not None
+    """
+    Test that loading a certificate file returns a valid certificate.
+    """
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=certificate)):
+            cert = load_certificate("mock_certificate.pem")
+            assert cert is not None
+
 
 def test_load_certificate_failure():
-  """
-  Test that loading a non-existent certificate file returns None.
-  """
-  with patch("builtins.open", side_effect=FileNotFoundError):
-    cert = load_certificate("non_existent_cert.pem")
-    assert cert is None
+    """
+    Test that loading a non-existent certificate file returns None.
+    """
+    with patch("builtins.open", side_effect=FileNotFoundError):
+        cert = load_certificate("non_existent_cert.pem")
+        assert cert is None
+
 
 def test_load_csr_success():
-  """
-  Test that loading a certificate signing request file returns the CSR.
-  """
-  with patch("os.path.exists", return_value=True):
-    with patch("builtins.open", mock_open(read_data=csr)):
-      mock_csr = load_csr("mock_csr.pem")
-      assert mock_csr is not None
+    """
+    Test that loading a certificate signing request file returns the CSR.
+    """
+    with patch("os.path.exists", return_value=True):
+        with patch("builtins.open", mock_open(read_data=csr)):
+            mock_csr = load_csr("mock_csr.pem")
+            assert mock_csr is not None
+
 
 def test_load_csr_failure():
-  """
-  Test that loading a non-existent certificate signing request file returns None.
-  """
-  with patch("os.path.exists", return_value=False):
-    mock_csr = load_csr("non_existent_csr.pem")
-    assert mock_csr is None
+    """
+    Test that loading a non-existent certificate signing request file returns None.
+    """
+    with patch("os.path.exists", return_value=False):
+        mock_csr = load_csr("non_existent_csr.pem")
+        assert mock_csr is None

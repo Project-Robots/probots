@@ -1,9 +1,13 @@
 """ Tests for the security module. """
+
 from unittest.mock import patch, mock_open
 from cryptography.hazmat.primitives import serialization
 from cryptography import x509
 
-from probots.security.ca import RootCertificateAuthority, IntermediateCertificateAuthority
+from probots.security.ca import (
+    RootCertificateAuthority,
+    IntermediateCertificateAuthority,
+)
 
 private_key = b"""-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAyQ/WjCT1E6zu0gPWKXMXUfAU2EVq8NIzyTD6jvR2UaQ5fp3S
@@ -109,101 +113,109 @@ pL3s2NJm+ZKAfhoH1v/3QtTi6HcykWx+s6A7aSwdjYuwB60xcKkFMU8AA4nCFEl4
 nAFJa22bfHvtqgqdDFwP5XSD8mZ+yrDQ9T0d2aZEbPGbgnbdGk7uaFfwb69S/9o=
 -----END CERTIFICATE-----"""
 
+
 def test_root_ca_load_success():
-  """
-  Test that the RootCertificateAuthority can successfully load both
-  the private key and certificate from the specified files.
-  """
-  with patch("os.path.exists", return_value=True):
-    with patch("probots.security.load_private_key",
-               return_value=serialization.load_pem_private_key(
-                 data=private_key,
-                 password=None
-                )
-              ):
-      with patch("probots.security.load_certificate",
-                 return_value=x509.load_pem_x509_certificate(
-                   data=certificate
-                 )
-                ):
-      
-        ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
-        assert ca.key is not None
-        assert ca.crt is not None
+    """
+    Test that the RootCertificateAuthority can successfully load both
+    the private key and certificate from the specified files.
+    """
+    with patch("os.path.exists", return_value=True):
+        with patch(
+            "probots.security.load_private_key",
+            return_value=serialization.load_pem_private_key(
+                data=private_key, password=None
+            ),
+        ):
+            with patch(
+                "probots.security.load_certificate",
+                return_value=x509.load_pem_x509_certificate(data=certificate),
+            ):
+
+                ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
+                assert ca.key is not None
+                assert ca.crt is not None
+
 
 def test_root_ca_load_failure_key():
-  """
-  Tests that the RootCertificateAuthority class can load a certificate
-  successfully from the specified file, but fails to load a private key
-  from the specified file, so it should generate a new private key.
-  """
-  with patch("os.path.exists", side_effect=[False, True]):
-    ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
-    assert ca.key is not None  # Should generate a new key
-    assert ca.crt is not None
-
-def test_root_ca_load_failure_crt():
-  """
-  Tests that the RootCertificateAuthority class can load a private key
-  successfully from the specified file, but fails to load a certificate
-  from the specified file, so it should generate a new certificate.
-  """
-  with patch("os.path.exists", side_effect=[True, False]):
-    with patch("probots.security.load_private_key",
-               return_value=serialization.load_pem_private_key(
-                 data=private_key,
-                 password=None
-                )
-              ):
-      ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
-      assert ca.crt is not None  # Should generate a new certificate
-
-def test_root_ca_save_success():
-  """
-  Tests that the RootCertificateAuthority class can save the private
-  key and certificate to the specified files successfully.
-  """
-  ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
-  ca.key = serialization.load_pem_private_key(data=private_key, password=None)
-  ca.crt = x509.load_pem_x509_certificate(data=certificate)
-    
-  with patch("builtins.open", mock_open()) as mock_file:
-    assert ca.save() is True
-    mock_file.assert_called()
-
-def test_intermediate_ca_load_success():
-  """
-  Tests that the IntermediateCertificateAuthority class can load the
-  private key and certificate from the specified files successfully.
-  """
-  root_ca = RootCertificateAuthority("mock_root_key.pem", "mock_root_crt.pem")
-  root_ca.key = serialization.load_pem_private_key(data=private_key, password=None)
-  root_ca.crt = x509.load_pem_x509_certificate(certificate)
-
-  with patch("os.path.exists", return_value=True):
-    with patch("probots.security.load_private_key",
-               return_value=serialization.load_pem_private_key(
-                 data=private_key,
-                 password=None
-                )
-              ):
-      with patch("probots.security.load_certificate",
-                 return_value=x509.load_pem_x509_certificate(
-                   data=certificate
-                 )
-                ):
-        ca = IntermediateCertificateAuthority("mock_key.pem", "mock_crt.pem", root_ca.key, root_ca.crt)
-        assert ca.key is not None
+    """
+    Tests that the RootCertificateAuthority class can load a certificate
+    successfully from the specified file, but fails to load a private key
+    from the specified file, so it should generate a new private key.
+    """
+    with patch("os.path.exists", side_effect=[False, True]):
+        ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
+        assert ca.key is not None  # Should generate a new key
         assert ca.crt is not None
 
+
+def test_root_ca_load_failure_crt():
+    """
+    Tests that the RootCertificateAuthority class can load a private key
+    successfully from the specified file, but fails to load a certificate
+    from the specified file, so it should generate a new certificate.
+    """
+    with patch("os.path.exists", side_effect=[True, False]):
+        with patch(
+            "probots.security.load_private_key",
+            return_value=serialization.load_pem_private_key(
+                data=private_key, password=None
+            ),
+        ):
+            ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
+            assert ca.crt is not None  # Should generate a new certificate
+
+
+def test_root_ca_save_success():
+    """
+    Tests that the RootCertificateAuthority class can save the private
+    key and certificate to the specified files successfully.
+    """
+    ca = RootCertificateAuthority("mock_key.pem", "mock_crt.pem")
+    ca.key = serialization.load_pem_private_key(data=private_key, password=None)
+    ca.crt = x509.load_pem_x509_certificate(data=certificate)
+
+    with patch("builtins.open", mock_open()) as mock_file:
+        assert ca.save() is True
+        mock_file.assert_called()
+
+
+def test_intermediate_ca_load_success():
+    """
+    Tests that the IntermediateCertificateAuthority class can load the
+    private key and certificate from the specified files successfully.
+    """
+    root_ca = RootCertificateAuthority("mock_root_key.pem", "mock_root_crt.pem")
+    root_ca.key = serialization.load_pem_private_key(data=private_key, password=None)
+    root_ca.crt = x509.load_pem_x509_certificate(certificate)
+
+    with patch("os.path.exists", return_value=True):
+        with patch(
+            "probots.security.load_private_key",
+            return_value=serialization.load_pem_private_key(
+                data=private_key, password=None
+            ),
+        ):
+            with patch(
+                "probots.security.load_certificate",
+                return_value=x509.load_pem_x509_certificate(data=certificate),
+            ):
+                ca = IntermediateCertificateAuthority(
+                    "mock_key.pem", "mock_crt.pem", root_ca.key, root_ca.crt
+                )
+                assert ca.key is not None
+                assert ca.crt is not None
+
+
 def test_intermediate_ca_save_success():
-  """
-  Tests that the IntermediateCertificateAuthority class can save the
-  private key and certificate to the specified files successfully.
-  """
-  root_ca = RootCertificateAuthority("mock_root_key.pem", "mock_root_crt.pem")
-  ca = IntermediateCertificateAuthority("mock_key.pem", "mock_crt.pem", root_ca.key, root_ca.crt)
-  
-  with patch("builtins.open", mock_open()) as mock_file:
-    assert ca.save() is True
-    assert mock_file.call_count == 2
+    """
+    Tests that the IntermediateCertificateAuthority class can save the
+    private key and certificate to the specified files successfully.
+    """
+    root_ca = RootCertificateAuthority("mock_root_key.pem", "mock_root_crt.pem")
+    ca = IntermediateCertificateAuthority(
+        "mock_key.pem", "mock_crt.pem", root_ca.key, root_ca.crt
+    )
+
+    with patch("builtins.open", mock_open()) as mock_file:
+        assert ca.save() is True
+        assert mock_file.call_count == 2
