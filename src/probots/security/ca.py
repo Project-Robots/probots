@@ -336,7 +336,7 @@ class IntermediateCertificateAuthority:
             .not_valid_before(datetime.now(utc))
             .not_valid_after(datetime.now(utc) + timedelta(security.VALIDITY))
             .add_extension(
-                extval=x509.BasicConstraints(ca=False, path_length=0),
+                extval=x509.BasicConstraints(ca=False, path_length=None),
                 critical=True,
             )
             .add_extension(
