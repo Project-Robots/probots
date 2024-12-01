@@ -141,7 +141,7 @@ class RootCertificateAuthority:
         try:
             with open(self.key_file, "wb") as f:
                 f.write(
-                    buffer=security.private_key_to_pem(self.key),
+                    security.private_key_to_pem(self.key),
                 )
             saved_private = True
         except OSError as e:
