@@ -114,7 +114,7 @@ class NodeCertificate:
         try:
             if save_key:
                 with open(self.key_file, "wb") as f:
-                    f.write(buffer=security.private_key_to_pem(private_key=self.key))
+                    f.write(security.private_key_to_pem(private_key=self.key))
                 saved_key = True
         except OSError as e:
             print(f"Error saving private key: {e}")
